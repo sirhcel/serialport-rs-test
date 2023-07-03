@@ -20,17 +20,12 @@ pub struct AppConfig {
     device: String,
 }
 
-
 fn main() {
     let config = AppConfig::parse();
-    let mut port = serialport::new(config.device, config.baud)
-        .open()
-        .unwrap();
+    let mut port = serialport::new(config.device, config.baud).open().unwrap();
 
     println!("port: {:?}", port);
     println!("timeout: {:?}", port.timeout());
-
-    let pattern = b" 0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
     if let Some(timeout_ms) = config.timeout_ms {
         port.set_timeout(Duration::from_millis(timeout_ms)).unwrap();
@@ -39,6 +34,9 @@ fn main() {
     if config.clear {
         port.clear(ClearBuffer::All).unwrap();
     }
+
+    let pattern =
+        b" 0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
     loop {
         port.write_all(pattern).unwrap();
